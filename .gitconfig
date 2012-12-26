@@ -1,0 +1,53 @@
+[include]
+    path = .gitconfig.local
+
+[alias]
+    st       = status
+    ci       = commit
+    co       = checkout
+    br       = branch
+    di       = diff
+    sr       = svn rebase
+    praise   = blame
+    d        = diff
+    dm       = diff master
+    dw       = diff --color-words
+    dc       = diff --cached
+    ds       = diff --staged
+    d1       = diff HEAD~
+    d2       = diff HEAD~~
+    d3       = diff HEAD~~~
+    d4       = diff HEAD~~~~
+    d5       = diff HEAD~~~~~
+    d10      = diff HEAD~~~~~~~~~~
+    gr       = grep
+    gn       = grep -n
+    lg       = log --date=local
+    cancel   = reset --soft HEAD~
+    stop     = "!f() { git stash pop 'stash@{'$@'}'; }; f"
+    difff    = diff --word-diff
+    diffc    = diff --word-diff-regex='\\w+|[^[:space:]]'
+    cpn      = cherry-pick -n
+    svn-br-rm           = ~/bin/git-svn-br-rm
+    svn-ref             = "!f() { ret=''; retsvn=''; for rev in `echo $@ | tr ' ' \"\n\" | sort | xargs echo;`; do retsvn=${retsvn}' '${rev}; ret=${ret}' '`git log --all --grep "git-svn-id.*@${rev}" --pretty=%H;`; done; echo $ret; echo $retsvn; }; f"
+    svn-diff            = "!f() { git svn dcommit -n | grep diff | awk -F'diff-tree' -v opt=$@ '{print \"git diff \"opt\" \"$2}' | sh; }; f"
+    svn-diff-list       = "!f() { git svn dcommit -n | grep diff | awk -F'diff-tree' -v opt=$@ '{print \"git diff --name-status \"opt\" \"$2}' | sh; }; f"
+    svn-rev-from-ticket = "!f() { git log --grep '#'$@ | grep git-svn-id: | awk -F'@' '{print $2}' | awk '{print \"r\"$1}' | sort | xargs echo | perl -pi -e 's/ /, /g' | perl -pi -e 's/\n//g'; }; f"
+
+[color]
+    ui          = auto
+    status      = auto
+    diff        = auto
+    branch      = auto
+    interactive = auto
+    grep        = auto
+
+[tig]
+    show-line-numbers    = yes
+    show-refs            = yes
+    show-rev-graph       = no
+    line-number-interval = 1
+    show-date            = local
+
+[tig "color"]
+    cursor = black yellow underline

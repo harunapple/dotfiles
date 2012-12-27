@@ -6,6 +6,7 @@ my dotfiles.
 - git
 - emacs
 - tmux
+- mysql
 
 # how to use #
 

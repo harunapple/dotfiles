@@ -14,3 +14,7 @@ Thumbs.db
 *\#*
 *~
 \#*\#
+
+.zsh.d/*.local
+.zsh.d/include/*.local
+private

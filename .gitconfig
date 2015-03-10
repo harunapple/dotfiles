@@ -9,6 +9,7 @@
     di       = diff
     sr       = svn rebase
     praise   = blame
+    fp       = fetch --prune
     d        = diff
     dm       = diff master
     dw       = diff --color-words
@@ -23,16 +24,27 @@
     gr       = grep
     gn       = grep -n
     lg       = log --date=local
+    lga      = log --graph --all --abbrev-commit --pretty=format:'%x09 %Cred%h%Creset %Cgreen%ai %C(bold blue)(%an) -%C(yellow)%d%Creset %s%Creset'
+    lgg      = log --graph       --abbrev-commit --pretty=format:'%x09 %Cred%h%Creset %Cgreen%ai %C(bold blue)(%an) -%C(yellow)%d%Creset %s%Creset'
     cancel   = reset --soft HEAD~
+    modified = diff --diff-filter=M
     stop     = "!f() { git stash pop 'stash@{'$@'}'; }; f"
     difff    = diff --word-diff
     diffc    = diff --word-diff-regex='\\w+|[^[:space:]]'
     cpn      = cherry-pick -n
+    export-diff = "!f() { git archive --format=zip HEAD `git diff HEAD~ --name-only` -o archive.zip; }; f"
     svn-br-rm           = ~/bin/git-svn-br-rm
     svn-ref             = "!f() { ret=''; retsvn=''; for rev in `echo $@ | tr ' ' \"\n\" | sort | xargs echo;`; do retsvn=${retsvn}' '${rev}; ret=${ret}' '`git log --all --grep "git-svn-id.*@${rev}" --pretty=%H;`; done; echo $ret; echo $retsvn; }; f"
     svn-diff            = "!f() { git svn dcommit -n | grep diff | awk -F'diff-tree' -v opt=$@ '{print \"git diff \"opt\" \"$2}' | sh; }; f"
     svn-diff-list       = "!f() { git svn dcommit -n | grep diff | awk -F'diff-tree' -v opt=$@ '{print \"git diff --name-status \"opt\" \"$2}' | sh; }; f"
     svn-rev-from-ticket = "!f() { git log --grep '#'$@ | grep git-svn-id: | awk -F'@' '{print $2}' | awk '{print \"r\"$1}' | sort | xargs echo | perl -pi -e 's/ /, /g' | perl -pi -e 's/\n//g'; }; f"
+    pr = pull-request
+    b = browse
+
+[pager]
+    log  = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
+    show = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
+    diff = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
 
 [color]
     ui          = auto
@@ -51,3 +63,7 @@
 
 [tig "color"]
     cursor = black yellow underline
+
+[core]
+    quotepath = false
+#    warnambiguousrefs = false

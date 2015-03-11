@@ -3,7 +3,8 @@
 ##
 export LANG=ja_JP.UTF-8
 export PATH=/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH
-export EDITOR='/usr/local/bin/emacs -nw -q -l ~/.emacs.d/.emacs.small'
+#export EDITOR='/usr/local/bin/emacs -nw'
+export EDITOR=emacs
 export LESSHISTFILE=$HOME/tmp/.lesshst
 export GDBHISTFILE=$HOME/tmp/.gdb_history
 export MYSQL_HISTFILE=$HOME/tmp/.mysql_history
@@ -70,6 +71,7 @@ esac
 ##
 alias ll="ls -laFG"
 alias l=ll
+alias less='less -R'
 alias lll="ls -laFG | less"
 alias llh="ls -laFGh"
 alias rm="rm -i"
@@ -82,23 +84,40 @@ alias gst='git st && git stash list'
 alias gsr='git svn rebase'
 alias gsta='git stash'
 alias gstap='git stash pop'
-alias emacs="/usr/local/bin/emacs -nw -l ~/.emacs.d/.emacs"
+alias gh='hub'
+alias emacs="/usr/local/bin/emacs -nw -l ~/.emacs.d/init.el"
 alias e=emacs
-alias es="/usr/local/bin/emacs -nw -q -l ~/.emacs.d/.emacs.small"
+alias es="/usr/local/bin/emacs -nw -l ~/.emacs.d/init.el"
 alias f="fg"
 alias fraise="open -a fraise"
 alias fr=fraise
+alias textmate="open -a TextMate"
+alias tm=textmate
+alias mou="open -a Mou"
 alias j="jobs"
 alias bksc="/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine -background"
 alias dnscc="dscacheutil -flushcache"
 alias ql='qlmanage -p "$@" >& /dev/null'
-alias tree='tree -N'
+alias tree='tree -N -F'
 alias t=tree
+alias top=htop
+alias df=dfc
 alias mkdir="mkdir -p"
 alias beep="echo $'\a'"
 alias say='say -v Victoria'
+alias sayj='say -v Kyoko'
 alias pc='pbcopy'
 alias pv='pbpaste'
+alias b='brew'
+alias pb='phpbrew'
+alias s='svn'
+alias r='rails'
+alias diff='colordiff'
+alias notifon='launchctl load -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist; terminal-notifier -message 通知設定をonにしました'
+alias notifoff='terminal-notifier -message 通知設定をoffにしました; sleep 2; launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist'
+alias vagrant='/usr/bin/vagrant'
+alias be='bundle exec'
+alias relogin='exec $SHELL -l'
 
 alias -g ....="../.."
 alias -g ......="../../.."
@@ -115,23 +134,30 @@ alias -g X='| xargs'
 # set prompt
 ##
 function git-prompt {
-    local branch stash
+    local repo branch stash
 
-    if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-        return
+#    if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
+#        return
+#    fi
+
+    repo="`git config --get remote.origin.url | cut -d":" -f2 | cut -d "." -f1 2> /dev/null`"
+    if [[ -n $repo ]]; then
+        repo="$repo"
     fi
 
     branch=$(basename "`git symbolic-ref HEAD 2> /dev/null`")
     if [[ -z $branch ]]; then
+	echo $branch
         return
     fi
 
-    stash="`git stash list | awk -F':' '{print $1}' | tr '\n' ',' | sed 's/,$//g'`"
+    stash="`git stash list | awk -F':' '{print $1}' | wc -l | tr -d ' '`"
+#    stash="`git stash list | awk -F':' '{print $1}' | tr '\n' ',' | sed 's/,$//g'`"
     if [[ -n $stash ]]; then
-        stash=" %{\e[32m%}($stash)%{\e[00m%}"
+        stash="%{\e[32m%}[stash:$stash]%{\e[00m%}"
     fi
 
-    echo "%{\e[35m%}($branch)$stash%{\e[00m%} "
+    echo "%{\e[35m%}($branch@$repo)$stash%{\e[00m%} "
 }
 
 setopt prompt_subst # プロンプト文字列の再評価
@@ -146,24 +172,61 @@ else
     RPROMPT=""
 fi
 
+## for z
+#. `brew --prefix`/etc/profile.d/z.sh
+#function precmd () {
+#   z --add "$(pwd -P)"
+#}
+
 # for android
-export PATH=$PATH:$HOME/android-sdk/platform-tools
+#export PATH=$PATH:$HOME/android-sdk/platform-tools
 
 # for perl, perlbrew
-export MODULE_SETUP_DIR=~/perl5/.module-setup
-export DBIC_TRACE=1
-source ~/perl5/perlbrew/etc/bashrc
-alias pb="perlbrew"
-alias perlmodules="find `perl -e 'print\"@INC\"'` -name '*.pm' -print";
+#export MODULE_SETUP_DIR=~/perl5/.module-setup
+#export DBIC_TRACE=1
+#source ~/perl5/perlbrew/etc/bashrc
+#alias pb="perlbrew"
+#alias perlmodules="find `perl -e 'print\"@INC\"'` -name '*.pm' -print";
 
-# for node
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-export NODE_PATH=$HOME/.nodebrew/current/node_modules
+## for node
+#export PATH=$HOME/.nodebrew/current/bin:$PATH
+#export NODE_PATH=$HOME/.nodebrew/current/node_modules
 
 # for ruby
-export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM
+#export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+#[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM
+export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
+export MAKEOPTS="-j2"
+eval "$(rbenv init - zsh)"
+
+# for go-lang
+export GOPATH=~/go
+export PATH=$GOPATH/bin:$PATH
 
 # include
 [ -f $ZDOTDIR/.zshrc.local ] && source $ZDOTDIR/.zshrc.local
 [ -f $ZDOTDIR/include/functions.zsh ] && source $ZDOTDIR/include/functions.zsh
+
+# for anyenv
+export PATH="$HOME/.anyenv/bin:$PATH"
+eval "$(anyenv init -)"
+
+eval "$(direnv hook $0)"
+export DIRENV_RUBY=/usr/bin/ruby
+
+## ^r でのコマンドヒストリにpecoを使う
+function peco-select-history() {
+  local tac
+  if which tac > /dev/null; then
+    tac="tac"
+  else
+    tac="tail -r"
+  fi
+  BUFFER=$(\history -n 1 | \
+    eval $tac | \
+    peco --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history

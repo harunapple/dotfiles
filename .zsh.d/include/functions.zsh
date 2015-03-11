@@ -5,9 +5,11 @@
 # alc
 function alc() {
     if [ $# != 0 ]; then
-        lynx -dump -nonumbers "http://eow.alc.co.jp/$*/UTF-8/?ref=sa" | less +38
+#        lynx -dump -nonumbers "http://eow.alc.co.jp/$*/UTF-8/?ref=sa" | less +38
+        w3m "http://eow.alc.co.jp/$*/UTF-8/?ref=sa" | less +28
     else
-        lynx -dump -nonumbers "http://www.alc.co.jp/"
+#        lynx -dump -nonumbers "http://www.alc.co.jp/"
+        w3m "http://www.alc.co.jp/"
     fi
 }
 
